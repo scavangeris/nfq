@@ -56,6 +56,6 @@ class RestaurantTablesRepository extends ServiceEntityRepository
             ->where('q.restaurantId = :id AND q.status = true ')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getSingleResult();
+            ->getSingleScalarResult();
     }
 }

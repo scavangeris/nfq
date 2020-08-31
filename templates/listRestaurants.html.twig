@@ -1,10 +1,12 @@
 {% extends "base.html.twig" %}
 {% block body %}
 <div class="container">
-  <div class="col-xs-12">
+  <div class="col-12">
     <div class="row">
-        <button class="btn-success"><a href="{{ path('restaurant_create')}}">Add Restaurant</a></button>
-        <table class="table">
+        <div class="col-4">
+            <a href="{{ path('restaurant_create')}}"><button class="btn-success padded">Add Restaurant</button></a>
+        </div>
+        <table class="table text-center">
         <thead>
             <tr>
             <th scope="col">ID</th>
@@ -28,8 +30,8 @@
                         {% else %}
                             <td style="color: red;">Inactive</td>
                 {% endif %}
-                <td><button class="btn-btn"><a href="{{ path('restaurant_edit', {'id': restaurant.id})}}">Edit</a></button></td>
-                <td><button class="btn-danger"><a href="{{ path('restaurant_delete', {'id': restaurant.id})}}">Delete</a></button></td>
+                <td><a href="{{ path('restaurant_edit', {'id': restaurant.id})}}"><button class="btn-btn">Edit</button></a></td>
+                <td><a href="{{ path('restaurant_delete', {'id': restaurant.id})}}"><button class="btn-danger">Delete</button></a></td>
             </tr>
             {% endfor %}
         </tbody>

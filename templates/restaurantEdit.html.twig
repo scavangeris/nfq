@@ -1,4 +1,47 @@
-{# {% extends "base.html.twig" %} #}
+{% extends "base.html.twig" %}
 {% block body %}
-{{form(form)}}
+<div class="container">
+    <div class="row">
+        <div class="col-5">
+            <h1 class="text-center">Restaurant</h1>
+            <div>
+                {{form(form)}}
+            </div>
+        </div>
+        <div class="col-7">
+            <h1 class="text-center">Tables</h1>
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Number</th>
+                            <th scope="col">Capacity</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for table in tables %}
+                            <tr>
+                                <td>{{table.number}}</td>
+                                <td>{{table.capacity}}</td>
+                                 {% if table.status == true %} 
+                                    <td style="color: green;">Active</td>
+                                        {% else %}
+                                            <td style="color: red;">Inactive</td>
+                                {% endif %}
+                                <td><a href="{{ path('restaurant_edit', {'id': table.id})}}"><button class="btn-btn">Edit</button></a></td>
+                                <td><a href="{{ path('table_delete', {'id': table.id})}}"><button class="btn-danger">Delete</button></a></td>         
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            <div class="col-4">
+                <a href="{{ path('table_create', {'id': resId})}}"><button class="btn-success padded">Add Table</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
