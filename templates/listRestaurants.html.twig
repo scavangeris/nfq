@@ -8,7 +8,7 @@
           <th scope="col">#</th>
           <th scope="col">Title</th>
           <th scope="col">Photo</th>
-          <th scope="col">Max Table Count</th>
+          <th scope="col">Active tables</th>
           <th scope="col">Status</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
@@ -20,15 +20,13 @@
             <td>{{restaurant.id}}</td>
             <td>{{restaurant.title}}</td>
             <td>{{restaurant.photo}}</td>
-            <td>{{restaurant.maxTable}}</td>
+            <td>{{restaurant.tables}}</td>
             {% if restaurant.status == true %} 
                 <td>Active</td>
                     {% else %}
                         <td>Inactive</td>
             {% endif %}
-            <td>Edit
-            {# tiesiogiai pagal id i restorana, o viduje staliukai #}
-            {# <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }} ">EDIT</a> #}
+            <td><a href="{{ path('restaurant_edit', {'id': restaurant.id})}}">Edit</a>
           </td>
           <td>Delete</td>
         </tr>

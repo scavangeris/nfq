@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\RestaurantTables;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Restaurants;
 
 /**
  * @method RestaurantTables|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,14 @@ class RestaurantTablesRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findActiveById($id)
+    {
+        return $this->createQueryBuilder('q')
+            ->select('count(q.id)')
+            ->where('q.restaurantId = :id AND q.status = true ')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getSingleResult();
+    }
 }
