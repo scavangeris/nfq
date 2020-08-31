@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\RestaurantsType;
 use App\Service\Table;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -88,7 +87,7 @@ class MainController extends AbstractController
      */
     public function restaurantEdit(Request $request, $id)
     {   
-        $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneById($id);
+        $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneBy(['id' => $id]);
         $form = $this->createForm(RestaurantsType::class, $restaurant);
         
         $form->handleRequest($request);
