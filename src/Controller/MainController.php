@@ -7,6 +7,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\RestaurantsType;
+use App\Service\Table;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @IsGranted("ROLE_ADMIN")
@@ -51,11 +54,28 @@ class MainController extends AbstractController
     
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
+            // dd($form['photoFile']->getData());
             $restaurant = $form->getData();
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($restaurant);
-            $entityManager->flush();
+            //handling photo upload start
+            $photoFile = $form->get('photoFile')->getData();
+            if ($photoFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+                    // moving file to directory
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $newFilename
+                    );
+                $restaurant->setPhoto($newFilename);
+            }else{
+                $restaurant->setPhoto('n/a');
+            }
+            //handling photo upload end
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($restaurant);
+            $em->flush();
     
             return $this->redirectToRoute('restaurant_list');
         }
@@ -67,26 +87,70 @@ class MainController extends AbstractController
     /**
      * @Route("/restaurant/edit/{id}", name="restaurant_edit")
      */
-    public function restaurantEdit(Request $request, $id)
+    public function restaurantEdit(Request $request, $id, Restaurants $restaurants)
     {   
         $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneById($id);
-
-        $form = $this->createForm(RestaurantsType::class, $restaurant);
+        $form = $this->createForm(RestaurantsType::class, $restaurants);
+        
         $form->handleRequest($request);
+        $file = $restaurant->getPhoto();
         if ($form->isSubmitted() && $form->isValid()) {
-
             $restaurant->setTitle($form->get('title')->getData());
-            $restaurant->setPhoto($form->get('photo')->getData());
+            //handling photo upload start
+            $photoFile = $form->get('photoFile')->getData();
+            if ($photoFile instanceof UploadedFile) {
+                $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$photoFile->guessExtension();
+                    // moving file to directory
+                    $photoFile->move(
+                        $this->getParameter('photos_directory'),
+                        $newFilename
+                    );
+                $restaurant->setPhoto($newFilename);
+            }else{
+                $restaurant->setPhoto($file);
+            }
+            //handling photo upload end
+            
             $restaurant->setMaxTable($form->get('maxTable')->getData());
             $restaurant->setStatus($form->get('status')->getData());
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($restaurant);
-            $entityManager->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($restaurant);
+            $em->flush();
     
             return $this->redirectToRoute('restaurant_list');
         }
         return $this->render('restaurantEdit.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/testavimas", name="test")
+     */
+    public function testavimas(Table $table)
+    {
+        $tables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findById(2);
+        $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findById(5);
+
+        $table->validatingMaxTables($tables[0], $restaurant[0]);
+    }
+
+     /**
+     * @Route("/restaurant/delete/{id}", name="restaurant_delete")
+     */
+    public function restaurantDelete($id)
+    {   
+       $em = $this->getDoctrine()->getManager();
+       $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneBy(['id' => $id]);
+       $tables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findBy(['restaurantId' => $id]);
+       foreach($tables as $table){
+          $em->remove($table);
+       }
+       unlink($this->getParameter('photos_directory').'/'.$restaurant->getPhoto());
+       $em->remove($restaurant);
+       $em->flush();
+       return $this->redirectToRoute('restaurant_list');
     }
 }

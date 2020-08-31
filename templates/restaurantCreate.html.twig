@@ -1,4 +1,7 @@
 {% extends "base.html.twig" %}
 {% block body %}
-{{form(form)}}
+{{form_start(form)}}
+{{form_row(form.title)}}
+{{form_row(form.photoFile)}}
+{{form_end(form)}}
 {% endblock %}

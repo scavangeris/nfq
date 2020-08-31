@@ -1,38 +1,40 @@
 {% extends "base.html.twig" %}
 {% block body %}
 <div class="container">
-  <div class="row">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Title</th>
-          <th scope="col">Photo</th>
-          <th scope="col">Active tables</th>
-          <th scope="col">Status</th>
-          <th scope="col">Edit</th>
-          <th scope="col">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for restaurant in restaurants %}
-        <tr>
-            <td>{{restaurant.id}}</td>
-            <td>{{restaurant.title}}</td>
-            <td>{{restaurant.photo}}</td>
-            <td>{{restaurant.tables}}</td>
-            {% if restaurant.status == true %} 
-                <td>Active</td>
-                    {% else %}
-                        <td>Inactive</td>
-            {% endif %}
-            <td><a href="{{ path('restaurant_edit', {'id': restaurant.id})}}">Edit</a>
-          </td>
-          <td>Delete</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  <div class="col-xs-12">
+    <div class="row">
+        <button class="btn-success"><a href="{{ path('restaurant_create')}}">Add Restaurant</a></button>
+        <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Title</th>
+            <th scope="col">Photo</th>
+            <th scope="col">Active tables</th>
+            <th scope="col">Status</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for restaurant in restaurants %}
+            <tr>
+                <td>{{restaurant.id}}</td>
+                <td>{{restaurant.title}}</td>
+                <td><a href="{{ asset('uploads/' ~ restaurant.photo) }}"><img style="height: 30px;" src="{{ asset('uploads/' ~ restaurant.photo) }}"></a></td>
+                <td>{{restaurant.tables}}</td>
+                {% if restaurant.status == true %} 
+                    <td style="color: green;">Active</td>
+                        {% else %}
+                            <td style="color: red;">Inactive</td>
+                {% endif %}
+                <td><button class="btn-btn"><a href="{{ path('restaurant_edit', {'id': restaurant.id})}}">Edit</a></button></td>
+                <td><button class="btn-danger"><a href="{{ path('restaurant_delete', {'id': restaurant.id})}}">Delete</a></button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
   </div>
 </div>
 {% endblock %}

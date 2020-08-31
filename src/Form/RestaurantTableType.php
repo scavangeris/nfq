@@ -2,25 +2,19 @@
 
 namespace App\Form;
 
-use App\Entity\Restaurants;
+use App\Entity\RestaurantTables;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RestaurantsType extends AbstractType
+class RestaurantTableType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('photoFile', FileType::class,[
-                'label' => 'Photos',
-                'required' => false,
-                'mapped' => false,
-            ])
-            ->add('maxTable')
+            ->add('capacity')
+            ->add('number')
             ->add('status')
             ->add('save', SubmitType::class)
         ;
@@ -29,7 +23,7 @@ class RestaurantsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Restaurants::class,
+            'data_class' => RestaurantTables::class,
         ]);
     }
 }
