@@ -54,7 +54,6 @@ class MainController extends AbstractController
     
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // dd($form['photoFile']->getData());
             $restaurant = $form->getData();
             //handling photo upload start
             $photoFile = $form->get('photoFile')->getData();
@@ -87,10 +86,10 @@ class MainController extends AbstractController
     /**
      * @Route("/restaurant/edit/{id}", name="restaurant_edit")
      */
-    public function restaurantEdit(Request $request, $id, Restaurants $restaurants)
+    public function restaurantEdit(Request $request, $id)
     {   
         $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneById($id);
-        $form = $this->createForm(RestaurantsType::class, $restaurants);
+        $form = $this->createForm(RestaurantsType::class, $restaurant);
         
         $form->handleRequest($request);
         $file = $restaurant->getPhoto();
