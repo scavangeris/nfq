@@ -3,4 +3,4 @@
 #    controller: App\Controller\DefaultController::index
 # home:
 #     path: /home
-#     controller: App\Controller\MainController::restourantList
+#     controller: App\Controller\MainController::restaurantList

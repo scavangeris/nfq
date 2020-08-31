@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+{% block body %}
+<div class="container">
+  <div class="row">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title</th>
+          <th scope="col">Photo</th>
+          <th scope="col">Max Table Count</th>
+          <th scope="col">Status</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for restaurant in restaurants %}
+        <tr>
+            <td>{{restaurant.id}}</td>
+            <td>{{restaurant.title}}</td>
+            <td>{{restaurant.photo}}</td>
+            <td>{{restaurant.maxTable}}</td>
+            {% if restaurant.status == true %} 
+                <td>Active</td>
+                    {% else %}
+                        <td>Inactive</td>
+            {% endif %}
+            <td>Edit
+            {# tiesiogiai pagal id i restorana, o viduje staliukai #}
+            {# <a href="{{ path('restaurant_edit', {'id': restaurant.id}) }} ">EDIT</a> #}
+          </td>
+          <td>Delete</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
