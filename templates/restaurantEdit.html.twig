@@ -30,7 +30,7 @@
                                         {% else %}
                                             <td style="color: red;">Inactive</td>
                                 {% endif %}
-                                <td><a href="{{ path('restaurant_edit', {'id': table.id})}}"><button class="btn-btn">Edit</button></a></td>
+                                <td><a href="{{ path('table_edit', {'id': table.id})}}"><button class="btn-btn">Edit</button></a></td>
                                 <td><a href="{{ path('table_delete', {'id': table.id})}}"><button class="btn-danger">Delete</button></a></td>         
                             </tr>
                         {% endfor %}

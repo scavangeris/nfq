@@ -1,0 +1,10 @@
+{% extends "base.html.twig" %}
+{% block body %}
+   {{form(form)}}
+   {% for message in app.flashes('success') %}
+            <div class="alert alert-danger">
+                {{ message }}
+                <td><a href="{{ path('restaurant_edit', {'id': resId})}}"><button class="btn-btn">Ok</button></a></td>         
+            </div>
+        {% endfor %}
+{% endblock %}

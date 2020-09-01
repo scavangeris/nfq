@@ -174,7 +174,7 @@ class MainController extends AbstractController
             $table = $form->getData();
             $table->setRestaurantId($resId);
             $em = $this->getDoctrine()->getManager();
-            if($maxTables > $activeTables){
+            if($maxTables > $activeTables or $form->get('status')->getData() == false){
                 $em->persist($table);
                 $em->flush();
         
@@ -205,5 +205,42 @@ class MainController extends AbstractController
         $em->flush();
 
         return $this->redirect($this->generateUrl('restaurant_edit', array('id' => $resId)));
+    }
+
+     /**
+     * @Route("/table/edit/{id}", name="table_edit")
+     */
+    public function tableEdit(Request $request, $id)
+    {   
+        $table = $this->getDoctrine()->getRepository('App:RestaurantTables')->findOneBy(['id' => $id]);
+        $resId = $table->getRestaurantId();
+        $activeTables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findActiveById($resId);
+        $maxTables = $this->getDoctrine()->getRepository('App:Restaurants')->findOneBy(['id' => $resId]);
+        $maxTables = $maxTables->getMaxTable();
+        $form = $this->createForm(RestaurantTableType::class, $table);
+        
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $table->setCapacity($form->get('capacity')->getData());
+            $table->setNumber($form->get('number')->getData());
+            $table->setStatus($form->get('status')->getData());
+            $em = $this->getDoctrine()->getManager();
+            if($maxTables > $activeTables or $form->get('status')->getData() == false){
+                $em->persist($table);
+                $em->flush();
+        
+                return $this->redirect($this->generateUrl('restaurant_edit', array('id' => $resId)));
+
+            }else{
+                $this->addFlash('success', 'Warning: status will be set to "Inactive" - Max active talbe count reached');
+                $table->setStatus(0);
+                $em->persist($table);
+                $em->flush();
+            }
+        }
+        return $this->render('tableEdit.html.twig', [
+            'resId' => $resId,
+            'form' => $form->createView(),
+        ]);
     }
 }
