@@ -27,7 +27,6 @@ class MainController extends AbstractController
         $gathering = [];
         foreach($restaurants as $restaurant){
             $tables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findActiveById($restaurant->getId());
-            // dump($tables);
             $gathering['tables'] =  $tables;
             $gathering['title'] = $restaurant->getTitle();
             $gathering['photo'] = $restaurant->getPhoto();
@@ -91,6 +90,7 @@ class MainController extends AbstractController
         $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findOneBy(['id' => $id]);
         $resId = $restaurant->getId();
         $tables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findBy(['restaurantId' => $restaurant->getId()]);
+        $activeTables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findActiveById($restaurant->getId());
         $form = $this->createForm(RestaurantsType::class, $restaurant);
         
         $form->handleRequest($request);
@@ -113,30 +113,24 @@ class MainController extends AbstractController
                 $restaurant->setPhoto($file);
             }
             //handling photo upload end
-            $restaurant->setMaxTable($form->get('maxTable')->getData());
-            $restaurant->setStatus($form->get('status')->getData());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($restaurant);
-            $em->flush();
-    
-            return $this->redirectToRoute('restaurant_list');
+            if($form->get('maxTable')->getData() >= $activeTables){
+                $restaurant->setMaxTable($form->get('maxTable')->getData());
+                $restaurant->setStatus($form->get('status')->getData());
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($restaurant);
+                $em->flush();
+        
+                return $this->redirectToRoute('restaurant_list');
+            }else{
+                echo('You cannot reduce max table count lower than the tables are set.');
+            }
+            
         }
         return $this->render('restaurantEdit.html.twig', [
             'tables' => $tables,
             'resId' => $resId,
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/testavimas", name="test")
-     */
-    public function testavimas(Table $table)
-    {
-        $tables = $this->getDoctrine()->getRepository('App:RestaurantTables')->findById(2);
-        $restaurant = $this->getDoctrine()->getRepository('App:Restaurants')->findById(5);
-
-        $table->validatingMaxTables($tables[0], $restaurant[0]);
     }
 
      /**
