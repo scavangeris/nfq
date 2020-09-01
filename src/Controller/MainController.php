@@ -144,7 +144,13 @@ class MainController extends AbstractController
        foreach($tables as $table){
           $em->remove($table);
        }
-       unlink($this->getParameter('photos_directory').'/'.$restaurant->getPhoto());
+       if($this->getParameter('photos_directory').'/'.$restaurant->getPhoto()){
+           try{
+            unlink($this->getParameter('photos_directory').'/'.$restaurant->getPhoto());
+           } catch(\Exception $e){
+            error_log($e->getMessage());
+           }
+       } 
        $em->remove($restaurant);
        $em->flush();
        return $this->redirectToRoute('restaurant_list');
