@@ -58,4 +58,14 @@ class RestaurantTablesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findAllById($id)
+    {
+        return $this->createQueryBuilder('q')
+            ->select('q')
+            ->where('q.restaurantId = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 }
