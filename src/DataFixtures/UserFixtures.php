@@ -25,22 +25,6 @@ class UserFixtures extends Fixture
         $user->setPassword($this->passwordEncoder->encodePassword($user, 'adminas'));
         $manager->persist($user);
         $manager->flush();
-
-        $restaurant = new Restaurants();
-        $restaurant->setTitle('testinis pavadinimas');
-        $restaurant->setPhoto('there will be photo');
-        $restaurant->setMaxTable(5);
-        $restaurant->setStatus(1);
-        $manager->persist($restaurant);
-        $manager->flush();
-
-        $restaurant = new Restaurants();
-        $restaurant->setTitle('antras pavadinimas');
-        $restaurant->setPhoto('there will be photo');
-        $restaurant->setMaxTable(4);
-        $restaurant->setStatus(1);
-        $manager->persist($restaurant);
-        $manager->flush();
     }
 
 }
